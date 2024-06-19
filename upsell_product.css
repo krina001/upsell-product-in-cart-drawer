@@ -1,0 +1,38 @@
+.upsell_products{
+  width: 100%;
+  float: left;
+  margin: 0 0 30px;
+}
+.upsell-cart-item{
+    width: 100%;
+  float: left;
+  text-align: center;
+}
+.upsell_products-block{
+      display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.upsell_products-block .upsell-cart-item a{
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+.upsell_products-block .upsell-cart-item .title, .upsell_products-block .upsell-cart-item .money{
+  width: 100%;
+    float: left;
+    margin: 0 0 5px;
+    color: #222;
+  font: 600 14px/16px var(--font-body-family);
+}
+.upsell-cart-item button{
+  padding: 5px 0;
+    width: 60%;
+    background: #222;
+    color: #fff;
+  pointer-events: auto;
+}
+.upsell_products h3{
+  border-top: 1px solid;
+  padding: 10px 0 0;
+}
