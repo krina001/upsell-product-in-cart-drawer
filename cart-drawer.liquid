@@ -1,0 +1,81 @@
+<!-- in cart-drawer.liquid file find </cart-drawer-items> before close the cart-drawer-items add below code. -->
+
+<!-- ------------------------upsell products----------------------- -->
+        <div class="upsell_products">
+          {% assign last_item = cart.items.first %}
+          {% assign metafields = last_item.product.metafields.custom.upsell_product_id.value %}
+          {% if metafields != blank %}
+            <h3>Add These Extras</h3>
+            <div class="upsell_products-block">
+              {% for metafield in metafields %}
+                <div class="upsell-cart-item">
+                  <a href="{{ metafield.url }}">
+                    <img
+                      src="{{ metafield.featured_image | img_url: 'small' }}"
+                      alt="{{ metafield.title }}"
+                      width="100"
+                      height="100"
+                    >
+                    <span class="title">{{ metafield.title }}</span>
+                    <span class="money">{{ metafield.price | money }}</span>
+                  </a>
+                  <button
+                    name="btn"
+                    type="submit"
+                    class="add-upsell-to-cart"
+                    data-product-id="{{ metafield.selected_or_first_available_variant.id }}"
+                  >
+                    Add
+                  </button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+<!-- and add below script at the end of the file -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+attachAddToCartListeners();
+  });
+    function updateCartDrawer() {
+    fetch(`${routes.cart_url}?section_id=cart-drawer`)
+      .then(response => response.text())
+      .then((responseText) => {
+          const html = new DOMParser().parseFromString(responseText, 'text/html');
+          const selectors = ['cart-drawer-items', '.cart-drawer__footer'];
+          for (const selector of selectors) {
+            const targetElement = document.querySelector(selector);
+            const sourceElement = html.querySelector(selector);
+            if (targetElement && sourceElement) {
+              targetElement.replaceWith(sourceElement);
+            }
+          }
+        attachAddToCartListeners();
+        });
+  }
+  function attachAddToCartListeners() {
+    document.querySelectorAll('.upsell-cart-item .add-upsell-to-cart').forEach(function(button) {
+       console.log("click");
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        var productId = button.getAttribute('data-product-id');
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({ id: productId, quantity: 1 })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("update");
+          updateCartDrawer();
+        });
+      });
+    });
+  }
+</script>
